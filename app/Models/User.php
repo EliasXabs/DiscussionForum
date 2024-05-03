@@ -34,4 +34,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Reply::class);
     }
+
+    // In Post model
+public function author()
+{
+    return $this->belongsTo(User::class, 'user_id');  // Make sure 'user_id' is the correct foreign key
+}
+
 }
