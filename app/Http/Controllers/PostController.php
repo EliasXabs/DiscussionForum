@@ -18,28 +18,27 @@ class PostController extends Controller
         }
 
         // Filter posts by specific user
-        if ($request->has('user')) {
-            $userName = $request->input('user');
-            $query->whereHas('user', function ($query) use ($userName) {
-                $query->where('name', 'like', '%' . $userName . '%');
-            });
-        }
-
-        // Sorting functionality
-        switch ($request->input('sort')) {
-            case 'date':
-                $query->orderBy('created_at', 'desc');
-                break;
-            case 'popularity':
-                $query->withCount('likes')->orderBy('likes_count', 'desc');
-                break;
-        }
-
-        $posts = $query->paginate(10);
-
-        return view('index', compact('posts'));
+    if ($request->has('username')) {
+        $userName = $request->input('username');
+        $query->whereHas('user', function ($query) use ($userName) {
+            $query->where('name', 'like', '%' . $userName . '%');
+        });
     }
 
+    // Sorting functionality
+    switch ($request->input('sort')) {
+        case 'date':
+            $query->orderBy('created_at', 'desc');
+            break;
+        case 'popularity':
+            $query->withCount('likes')->orderBy('likes_count', 'desc');
+            break;
+    }
+
+    $posts = $query->paginate(10);
+
+    return view('index', compact('posts'));
+}
     public function create()
     {
         if (auth()->user()->is_disabled) {

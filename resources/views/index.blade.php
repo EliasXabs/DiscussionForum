@@ -36,10 +36,13 @@
         select {
             border-radius: 30px;
             background-color: #D3D3D3;
+            /* Light gray */
             color: black;
             border-color: #D3D3D3;
             backdrop-filter: blur(5px);
+            /* Glass effect for sort scroller */
             background: rgba(255, 255, 255, 0.5);
+            /* Ensuring the glass effect */
         }
 
         .btn-primary:hover,
@@ -47,10 +50,13 @@
         .btn-outline-primary:hover,
         .btn-link:hover {
             background-color: #A9A9A9;
+            /* Darker gray on hover and when active */
+            color: black;
         }
 
         .btn-link {
             color: black;
+            /* Black text for all link buttons */
             text-decoration: none;
         }
 
@@ -63,23 +69,11 @@
             padding-top: 20px;
         }
 
-        input[type="text"] {
-            background: rgba(255, 255, 255, 0.5);
-            border: 1px solid #ccc;
-            padding: 10px 30px 10px 10px;
-            background-image: url('https://img.icons8.com/ios-glyphs/30/000000/search--v1.png');
-            background-position: 95% center;
-            background-repeat: no-repeat;
-            margin-bottom: 20px;
-            margin-top: 15px;
-        }
-
+        input[type="text"],
         select {
-            width: 100%;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 30px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+            padding: 10px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
         }
 
         .like-btn,
@@ -100,6 +94,7 @@
 
         .comment-input {
             width: calc(100% - 140px);
+            /* Increased the width */
             padding: 100px;
             border-radius: 30px;
             border: 1px solid #ccc;
@@ -164,11 +159,11 @@
                                     placeholder="Write a reply...">
                                 <button type="submit" class="comment-btn">Reply</button>
                             </form>
-                            @foreach ($post->replies as $reply)
-                                <div>{{ $reply->user->name }}: {{ $reply->body }}</div>
-                            @endforeach
                         </div>
-                        @if (auth()->id() == $post->user_id)
+                        @foreach ($post->replies as $reply)
+                            <div>{{ $reply->user->name }}: {{ $reply->body }}</div>
+                        @endforeach
+                        @if (auth()->id() == $post->user_id || auth()->user()->is_admin)
                             <a href="{{ route('edit', $post->id) }}" class="btn btn-primary">Edit</a>
                             <form action="{{ route('delete', $post->id) }}" method="POST"
                                 style="display:inline-block;">
@@ -177,8 +172,7 @@
                                 <button type="submit" class="delete-btn">Delete</button>
                             </form>
                         @endif
-                    </div>
-                </div>
+                    </div </div>
             @endforeach
             {{ $posts->links() }}
         @else
@@ -187,6 +181,22 @@
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Add smooth scrolling to all links
+            $("a").on('click', function(event) {
+                if (this.hash !== "") {
+                    event.preventDefault();
+                    var hash = this.hash;
+                    $('html, body').animate({
+                        scrollTop: $(hash).offset().top
+                    }, 800, function() {
+                        window.location.hash = hash;
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
