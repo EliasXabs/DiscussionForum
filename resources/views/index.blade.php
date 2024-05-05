@@ -30,33 +30,28 @@
         }
 
         .btn-primary,
-        .btn-outline-primary {
-            border-radius: 28px;
-
+        .btn-outline-primary,
+        .btn-link,
+        input[type="text"],
+        select {
+            border-radius: 30px;
             background-color: #D3D3D3;
-            /* Light gray */
             color: black;
             border-color: #D3D3D3;
+            backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.5);
         }
-
 
         .btn-primary:hover,
         .btn-primary.active,
-        .btn-outline-primary:hover {
+        .btn-outline-primary:hover,
+        .btn-link:hover {
             background-color: #A9A9A9;
-            /* Darker gray on hover and when active */
-            color: black;
         }
 
         .btn-link {
             color: black;
-            /* Black text for all link buttons */
             text-decoration: none;
-        }
-
-        .btn-link:hover {
-            color: #A9A9A9;
-            /* Darker gray on hover for text links */
         }
 
         .card {
@@ -69,14 +64,9 @@
         }
 
         input[type="text"] {
-            margin-bottom: 30px;
-            /* Increased the margin */
             background: rgba(255, 255, 255, 0.5);
             border: 1px solid #ccc;
-            border-radius: 28px;
             padding: 10px 30px 10px 10px;
-            /* Adjust padding for icon */
-            box-sizing: border-box;
             background-image: url('https://img.icons8.com/ios-glyphs/30/000000/search--v1.png');
             background-position: 95% center;
             background-repeat: no-repeat;
@@ -84,9 +74,12 @@
             margin-top: 15px;
         }
 
-        .glass input[type="text"] {
-            backdrop-filter: blur(5px);
-            background: rgba(255, 255, 255, 0.2);
+        select {
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
         }
 
         .like-btn,
@@ -107,7 +100,6 @@
 
         .comment-input {
             width: calc(100% - 140px);
-            /* Increased the width */
             padding: 100px;
             border-radius: 30px;
             border: 1px solid #ccc;
@@ -137,14 +129,21 @@
                     <button onclick="window.location.href='{{ route('create') }}'"
                         class="btn btn-primary float-right">Add Post</button>
                 @endif
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-9">
-                <form action="{{ route('index') }}" method="GET">
-                    <input type="text" class="form-control mr-2" placeholder="Search posts by title" name="search"
-                        value="{{ request()->get('search') }}">
-                </form>
+                <div style="float: right; margin-right: 10px;">
+                    <form action="{{ route('index') }}" method="GET" class="form-inline">
+                        <input type="text" class="form-control mr-2 glass" placeholder="Search posts by title"
+                            name="search" value="{{ request()->get('search') }}">
+                        <select name="sort" class="form-control mr-2 glass" onchange="this.form.submit()">
+                            <option value="">Sort By</option>
+                            <option value="date" {{ request()->get('sort') == 'date' ? 'selected' : '' }}>Date
+                            </option>
+                            <option value="popularity" {{ request()->get('sort') == 'popularity' ? 'selected' : '' }}>
+                                Popularity</option>
+                            <option value="user" {{ request()->get('sort') == 'user' ? 'selected' : '' }}>User
+                            </option>
+                        </select>
+                    </form>
+                </div>
             </div>
         </div>
         @if ($posts->count() > 0)
@@ -153,7 +152,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ $post->title }}</h5>
                         <p class="card-text">{{ $post->body }}</p>
-                        <div class="mb-3"> <!-- Increased the margin-bottom -->
+                        <div>
                             <form action="{{ route('posts.like', $post->id) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="like-btn">Like</button>
@@ -165,8 +164,6 @@
                                     placeholder="Write a reply...">
                                 <button type="submit" class="comment-btn">Reply</button>
                             </form>
-                        </div>
-                        <div>
                             @foreach ($post->replies as $reply)
                                 <div>{{ $reply->user->name }}: {{ $reply->body }}</div>
                             @endforeach
@@ -177,7 +174,7 @@
                                 style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-outline-dark delete-btn">Delete</button>
+                                <button type="submit" class="delete-btn">Delete</button>
                             </form>
                         @endif
                     </div>
@@ -189,22 +186,6 @@
         @endif
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Add smooth scrolling to all links
-            $("a").on('click', function(event) {
-                if (this.hash !== "") {
-                    event.preventDefault();
-                    var hash = this.hash;
-                    $('html, body').animate({
-                        scrollTop: $(hash).offset().top
-                    }, 800, function() {
-                        window.location.hash = hash;
-                    });
-                }
-            });
-        });
-    </script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 
