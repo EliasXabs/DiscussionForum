@@ -18,12 +18,9 @@ class PostController extends Controller
         }
 
         // Filter posts by specific user
-    if ($request->has('username')) {
-        $userName = $request->input('username');
-        $query->whereHas('user', function ($query) use ($userName) {
-            $query->where('name', 'like', '%' . $userName . '%');
-        });
-    }
+        if ($request->has('filter') && $request->get('filter') === 'mine') {
+            $query->where('user_id', auth()->id());
+        }
 
     // Sorting functionality
     switch ($request->input('sort')) {

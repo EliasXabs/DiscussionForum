@@ -30,7 +30,9 @@ class AuthController extends Controller
         'name' => $request->name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
-        'avatar_url' => $request->avatar ?? null, // Default to null if not provided
+        'avatar_url' => $request->avatar ?? null,
+        'is_active' => true,
+        'is_admin' => false,
     ]);
         
 

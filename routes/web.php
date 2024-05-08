@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -28,3 +30,11 @@ Route::delete('/posts/delete/{id}', [PostController::class, 'destroy'])->name('d
 
 Route::post('/posts/{post}/likes', [PostController::class, 'like'])->name('posts.like')->middleware('auth');
 Route::post('/posts/{post}/replies', [PostController::class, 'reply'])->name('posts.reply')->middleware('auth');
+
+// Viewing the user profile
+Route::get('/user/profile', [UserController::class, 'show'])->name('user.profile')->middleware('auth');
+
+// Editing the user profile
+Route::get('/user/profile/edit', [UserController::class, 'edit'])->name('user.edit')->middleware('auth');
+Route::put('/user/profile/update', [UserController::class, 'update'])->name('user.update')->middleware('auth');
+

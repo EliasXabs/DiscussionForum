@@ -1,23 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Posts</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body,
-        html {
+        body, html {
             height: 100%;
             margin: 0;
             font-family: Arial, sans-serif;
             background: linear-gradient(to right, #b512eb, #54435a);
         }
 
-        .navbar,
-        .card,
-        .container {
+        .navbar, .card, .container {
             background: rgba(236, 234, 236, 0.15);
             border-radius: 8px;
             border: 1px solid rgba(216, 61, 243, 0.2);
@@ -29,34 +25,22 @@
             padding: 10px 0;
         }
 
-        .btn-primary,
-        .btn-outline-primary,
-        .btn-link,
-        input[type="text"],
-        select {
+        .btn-primary, .btn-outline-primary, .btn-link, input[type="text"], select {
             border-radius: 30px;
-            background-color: #D3D3D3;
-            /* Light gray */
+            background-color: #D3D3D3; /* Light gray */
             color: black;
             border-color: #D3D3D3;
-            backdrop-filter: blur(5px);
-            /* Glass effect for sort scroller */
-            background: rgba(255, 255, 255, 0.5);
-            /* Ensuring the glass effect */
+            backdrop-filter: blur(5px); /* Glass effect for sort scroller */
+            background: rgba(255, 255, 255, 0.5); /* Ensuring the glass effect */
         }
 
-        .btn-primary:hover,
-        .btn-primary.active,
-        .btn-outline-primary:hover,
-        .btn-link:hover {
-            background-color: #A9A9A9;
-            /* Darker gray on hover and when active */
+        .btn-primary:hover, .btn-primary.active, .btn-outline-primary:hover, .btn-link:hover {
+            background-color: #A9A9A9; /* Darker gray on hover and when active */
             color: black;
         }
 
         .btn-link {
-            color: black;
-            /* Black text for all link buttons */
+            color: black; /* Black text for all link buttons */
             text-decoration: none;
         }
 
@@ -69,16 +53,13 @@
             padding-top: 20px;
         }
 
-        input[type="text"],
-        select {
+        input[type="text"], select {
             padding: 10px;
             margin-bottom: 20px;
             box-sizing: border-box;
         }
 
-        .like-btn,
-        .comment-btn,
-        .delete-btn {
+        .like-btn, .comment-btn, .delete-btn {
             padding: 8px 12px;
             border-radius: 30px;
             border: none;
@@ -86,15 +67,12 @@
             transition: background-color 0.3s ease;
         }
 
-        .like-btn:hover,
-        .comment-btn:hover,
-        .delete-btn:hover {
+        .like-btn:hover, .comment-btn:hover, .delete-btn:hover {
             background-color: #D3D3D3;
         }
 
         .comment-input {
-            width: calc(100% - 140px);
-            /* Increased the width */
+            width: calc(100% - 140px); /* Increased the width */
             padding: 100px;
             border-radius: 30px;
             border: 1px solid #ccc;
@@ -106,38 +84,30 @@
         }
     </style>
 </head>
-
 <body>
     <div class="container glass">
         <div class="navbar glass">
-            <a href="{{ route('login') }}" class="btn btn-link {{ request()->is('login') ? 'disabled' : '' }}">Login</a>
-            <a href="{{ route('register') }}"
-                class="btn btn-link {{ request()->is('register') ? 'disabled' : '' }}">Register</a>
+            <a href="{{ route('login') }}" class="btn btn-link {{ request()->is('login') ? 'disabled' : '' }}">Logout</a>
+            <a href="{{ route('user.profile') }}" class="btn btn-link">Profile</a>
         </div>
         <div class="row mb-3">
             <div class="col-md-12">
-                <a href="{{ route('index') }}"
-                    class="btn btn-primary {{ request()->get('filter') == '' ? 'active' : '' }}">All Posts</a>
-                <a href="{{ route('index', ['filter' => 'mine']) }}"
-                    class="btn btn-primary {{ request()->get('filter') == 'mine' ? 'active' : '' }}">My Posts</a>
-                @if (auth()->check() && !auth()->user()->is_disabled)
-                    <button onclick="window.location.href='{{ route('create') }}'"
-                        class="btn btn-primary float-right">Add Post</button>
-                @endif
-                <div style="float: right; margin-right: 10px;">
-                    <form action="{{ route('index') }}" method="GET" class="form-inline">
-                        <input type="text" class="form-control mr-2 glass" placeholder="Search posts by title"
-                            name="search" value="{{ request()->get('search') }}">
-                        <select name="sort" class="form-control mr-2 glass" onchange="this.form.submit()">
-                            <option value="">Sort By</option>
-                            <option value="date" {{ request()->get('sort') == 'date' ? 'selected' : '' }}>Date
-                            </option>
-                            <option value="popularity" {{ request()->get('sort') == 'popularity' ? 'selected' : '' }}>
-                                Popularity</option>
-                            <option value="user" {{ request()->get('sort') == 'user' ? 'selected' : '' }}>User
-                            </option>
-                        </select>
-                    </form>
+            @if (auth()->check() && !auth()->user()->is_disabled)
+                <button onclick="window.location.href='{{ route('create') }}'"
+                    class="btn btn-primary float-right">Add Post</button>
+            @endif
+            <div style="float: right; margin-right: 10px;">
+                <form action="{{ route('index') }}" method="GET" class="form-inline">
+                    <input type="text" class="form-control mr-2 glass" placeholder="Search posts by title"
+                        name="search" value="{{ request()->get('search') }}">
+                    <select name="sort" class="form-control mr-2 glass" onchange="this.form.submit()">
+                        <option value="" disabled hidden>Sort By</option>
+                        <option value="date" {{ request()->get('sort') == 'date' ? 'selected' : '' }}>Date</option>
+                        <option value="popularity" {{ request()->get('sort') == 'popularity' ? 'selected' : '' }}>
+                            Popularity</option>
+                        <option value="user" {{ request()->get('sort') == 'user' ? 'selected' : '' }}>User</option>
+                    </select>
+                </form>
                 </div>
             </div>
         </div>
@@ -160,9 +130,6 @@
                                 <button type="submit" class="comment-btn">Reply</button>
                             </form>
                         </div>
-                        @foreach ($post->replies as $reply)
-                            <div>{{ $reply->user->name }}: {{ $reply->body }}</div>
-                        @endforeach
                         @if (auth()->id() == $post->user_id || auth()->user()->is_admin)
                             <a href="{{ route('edit', $post->id) }}" class="btn btn-primary">Edit</a>
                             <form action="{{ route('delete', $post->id) }}" method="POST"
@@ -172,7 +139,8 @@
                                 <button type="submit" class="delete-btn">Delete</button>
                             </form>
                         @endif
-                    </div </div>
+                    </div>
+                </div>
             @endforeach
             {{ $posts->links() }}
         @else
@@ -198,5 +166,4 @@
         });
     </script>
 </body>
-
 </html>
