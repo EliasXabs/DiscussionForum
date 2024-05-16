@@ -36,17 +36,20 @@ Route::post('/posts/{post}/likes', [PostController::class, 'like'])->name('posts
 Route::post('/posts/{post}/replies', [PostController::class, 'reply'])->name('posts.reply')->middleware('auth');
 Route::delete('/replies/{reply}', [PostController::class, 'destroyReply'])->name('reply.delete');
 
+
+
+
 // Viewing the user profile
 Route::get('/user/profile', [UserController::class, 'show'])->name('user.profile')->middleware('auth');
 
+Route::middleware(['auth','admin'])->group(function() {
 // Editing the user profile
 Route::get('/user/profile/edit', [UserController::class, 'edit'])->name('user.edit')->middleware('auth');
 Route::put('/user/profile/update', [UserController::class, 'update'])->name('user.update')->middleware('auth');
-
-
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 Route::post('/admin/users/{user}/toggle', [AdminController::class, 'toggleUser'])->name('admin.users.toggle');
 Route::delete('/admin/posts/{post}', [AdminController::class, 'deletePost'])->name('admin.posts.delete');
 Route::delete('/admin/replies/{reply}', [AdminController::class, 'deleteReply'])->name('admin.replies.delete');
 Route::get('/admin/post/{post}', [AdminController::class, 'showPost'])->name('admin.post.show');
 
+});
