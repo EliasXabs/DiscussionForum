@@ -72,8 +72,8 @@
         }
 
         .comment-input {
-            width: calc(100% - 140px); /* Increased the width */
-            padding: 100px;
+            width: 100%; /* Adjusted for full width */
+            padding: 8px;
             border-radius: 30px;
             border: 1px solid #ccc;
             outline: none;
@@ -87,83 +87,40 @@
 <body>
     <div class="container glass">
         <div class="navbar glass">
-            <a href="{{ route('login') }}" class="btn btn-link {{ request()->is('login') ? 'disabled' : '' }}">Logout</a>
+            <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                @csrf
+                <button type="submit" class="btn btn-link">Logout</button>
+            </form>
             <a href="{{ route('user.profile') }}" class="btn btn-link">Profile</a>
         </div>
-        <div class="row mb-3">
-            <div class="col-md-12">
-            @if (auth()->check() && !auth()->user()->is_disabled)
-                <button onclick="window.location.href='{{ route('create') }}'"
-                    class="btn btn-primary float-right">Add Post</button>
-            @endif
-            <div style="float: right; margin-right: 10px;">
-                <form action="{{ route('index') }}" method="GET" class="form-inline">
-                    <input type="text" class="form-control mr-2 glass" placeholder="Search posts by title"
-                        name="search" value="{{ request()->get('search') }}">
-                    <select name="sort" class="form-control mr-2 glass" onchange="this.form.submit()">
-                        <option value="" disabled hidden>Sort By</option>
-                        <option value="date" {{ request()->get('sort') == 'date' ? 'selected' : '' }}>Date</option>
-                        <option value="popularity" {{ request()->get('sort') == 'popularity' ? 'selected' : '' }}>
-                            Popularity</option>
-                        <option value="user" {{ request()->get('sort') == 'user' ? 'selected' : '' }}>User</option>
-                    </select>
-                </form>
+        @foreach ($posts as $post)
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ $post->title }}</h5>
+                    <p class="card-text">{{ $post->body }}</p>
+                    <div>
+                        @foreach ($post->replies as $reply)
+                            <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 5px;">
+                                <strong>{{ $reply->user->name }}:</strong> {{ $reply->body }}
+                                @if(auth()->id() === $reply->user_id || auth()->user()->is_admin)
+                                    <form action="{{ route('reply.delete', $reply->id) }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                    <form action="{{ route('posts.reply', $post->id) }}" method="POST">
+                        @csrf
+                        <input type="text" name="body" class="comment-input" placeholder="Write a reply...">
+                        <button type="submit" class="comment-btn">Reply</button>
+                    </form>
                 </div>
             </div>
-        </div>
-        @if ($posts->count() > 0)
-            @foreach ($posts as $post)
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $post->title }}</h5>
-                        <p class="card-text">{{ $post->body }}</p>
-                        <div>
-                            <form action="{{ route('posts.like', $post->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="like-btn">Like</button>
-                                <span>{{ $post->likes->count() }} likes</span>
-                            </form>
-                            <form action="{{ route('posts.reply', $post->id) }}" method="POST">
-                                @csrf
-                                <input type="text" name="body" class="comment-input"
-                                    placeholder="Write a reply...">
-                                <button type="submit" class="comment-btn">Reply</button>
-                            </form>
-                        </div>
-                        @if (auth()->id() == $post->user_id || auth()->user()->is_admin)
-                            <a href="{{ route('edit', $post->id) }}" class="btn btn-primary">Edit</a>
-                            <form action="{{ route('delete', $post->id) }}" method="POST"
-                                style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="delete-btn">Delete</button>
-                            </form>
-                        @endif
-                    </div>
-                </div>
-            @endforeach
-            {{ $posts->links() }}
-        @else
-            <div class="alert alert-info">No posts found</div>
-        @endif
+        @endforeach
+        {{ $posts->links() }} <!-- Pagination -->
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Add smooth scrolling to all links
-            $("a").on('click', function(event) {
-                if (this.hash !== "") {
-                    event.preventDefault();
-                    var hash = this.hash;
-                    $('html, body').animate({
-                        scrollTop: $(hash).offset().top
-                    }, 800, function() {
-                        window.location.hash = hash;
-                    });
-                }
-            });
-        });
-    </script>
 </body>
 </html>

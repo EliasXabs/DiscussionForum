@@ -32,7 +32,7 @@ class AuthController extends Controller
         'password' => Hash::make($request->password),
         'avatar_url' => $request->avatar ?? null,
         'is_active' => true,
-        'is_admin' => false,
+        'is_admin' => true,
     ]);
         
 
@@ -42,17 +42,32 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-{
+    {
     $request->validate([
         'email' => 'required|email',
         'password' => 'required',
     ]);
 
     if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        
+        if (Auth::user()->is_admin) {
+            return redirect()->intended('admin/dashboard'); // Redirect to admin dashboard
+        }
+
         return redirect()->route('index'); // Redirect to the route named 'index'
     } else {
         return back()->withErrors(['email' => 'The provided credentials do not match our records.']);
     }
-}
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();  
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
+    }
 
 }

@@ -128,4 +128,15 @@ class PostController extends Controller
 
         return back();
     }
+
+    public function destroyReply($id)
+{
+    $reply = Reply::findOrFail($id);
+    if ($reply->user_id != auth()->id() && !auth()->user()->is_admin) {
+        abort(403, 'Unauthorized access.');
+    }
+    $reply->delete();
+    return back()->with('success', 'Reply deleted successfully.');
+}
+
 }
