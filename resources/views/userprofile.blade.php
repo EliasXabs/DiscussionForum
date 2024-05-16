@@ -70,7 +70,9 @@
                 <img src="{{ asset($user->avatar_url) }}" alt="Avatar" class="avatar">
                 <h1>{{ $user->name }}</h1>
             </div>
-            <button onclick="window.location='{{ route('user.edit') }}'" class="btn">Edit Profile</button>
+            @if(auth()->user()->is_active)
+                <button onclick="window.location='{{ route('user.edit') }}'" class="btn">Edit Profile</button>
+            @endif
         </div>
         <div class="card">
             <div class="card-body">
@@ -86,13 +88,15 @@
                         <h5>{{ $post->title }}</h5>
                         <p>{{ $post->body }}</p>
                         <div>
-                            <!-- Actions like edit, delete, like, reply can be added here -->
-                            <a href="{{ route('edit', $post->id) }}" class="btn">Edit</a>
-                            <form action="{{ route('delete', $post->id) }}" method="POST" style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn">Delete</button>
-                            </form>
+                            <!-- Only active users can edit and delete their posts -->
+                            @if(auth()->user()->is_active)
+                                <a href="{{ route('edit', $post->id) }}" class="btn">Edit</a>
+                                <form action="{{ route('delete', $post->id) }}" method="POST" style="display:inline-block;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn">Delete</button>
+                                </form>
+                            @endif
                             <!-- Add other actions as needed -->
                         </div>
                     </div>
