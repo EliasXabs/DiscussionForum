@@ -103,20 +103,24 @@
                             <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 5px;">
                                 <strong>{{ $reply->user->name }}:</strong> {{ $reply->body }}
                                 @if(auth()->id() === $reply->user_id || auth()->user()->is_admin)
-                                    <form action="{{ route('reply.delete', $reply->id) }}" method="POST" style="display: inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                    </form>
+                                    @if(auth()->user()->is_active)
+                                        <form action="{{ route('reply.delete', $reply->id) }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
+                                    @endif
                                 @endif
                             </div>
                         @endforeach
                     </div>
-                    <form action="{{ route('posts.reply', $post->id) }}" method="POST">
-                        @csrf
-                        <input type="text" name="body" class="comment-input" placeholder="Write a reply...">
-                        <button type="submit" class="comment-btn">Reply</button>
-                    </form>
+                    @if(auth()->user()->is_active)
+                        <form action="{{ route('posts.reply', $post->id) }}" method="POST">
+                            @csrf
+                            <input type="text" name="body" class="comment-input" placeholder="Write a reply...">
+                            <button type="submit" class="comment-btn">Reply</button>
+                        </form>
+                    @endif
                 </div>
             </div>
         @endforeach
