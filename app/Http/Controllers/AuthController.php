@@ -21,7 +21,7 @@ class AuthController extends Controller
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8|confirmed',
-        'avatar' => 'nullable' // Removed the URL validation
+        'avatar' => 'nullable'
     ]);
 
         
@@ -32,7 +32,7 @@ class AuthController extends Controller
         'password' => Hash::make($request->password),
         'avatar_url' => $request->avatar ?? null,
         'is_active' => true,
-        'is_admin' => true,
+        'is_admin' => false,
     ]);
         
 
@@ -54,7 +54,7 @@ class AuthController extends Controller
             return redirect()->intended('admin/dashboard'); // Redirect to admin dashboard
         }
 
-        return redirect()->route('index'); // Redirect to the route named 'index'
+        return redirect()->route('index'); // Redirect to index
     } else {
         return back()->withErrors(['email' => 'The provided credentials do not match our records.']);
     }
